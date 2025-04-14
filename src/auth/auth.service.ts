@@ -1,3 +1,4 @@
+import { ConfigService } from '@nestjs/config';
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
@@ -9,8 +10,9 @@ import { RegisterDto } from './dto/register.dto';
 @Injectable()
 export class AuthService {
   constructor(
-    private prisma: PrismaService,
-    private jwtService: JwtService,
+    private readonly prisma: PrismaService,
+    private readonly jwtService: JwtService,
+    private readonly configService: ConfigService,
   ) {}
 
   async validateUser(
@@ -38,11 +40,19 @@ export class AuthService {
     if (!user) {
       throw new UnauthorizedException('Invalid credentials');
     }
-    return {
-      access_token: this.jwtService.sign({
+    console.log('Logging...');
+    const secret = this.configService.get<string>('JWT_SECRET');
+    console.log({ secret });
+    const access_token = await this.jwtService.signAsync(
+      {
         userId: user.id,
         email: user.email,
-      }),
+      },
+      { secret },
+    );
+
+    return {
+      access_token,
     };
   }
 

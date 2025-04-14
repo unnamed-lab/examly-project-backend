@@ -22,7 +22,7 @@ import configuration from 'config/configuration';
     HealthModule,
     ConfigModule.forRoot({
       load: [configuration],
-      envFilePath: ['.env.local', '.env'],
+      envFilePath: '.env',
       isGlobal: true,
       cache: true,
     }),

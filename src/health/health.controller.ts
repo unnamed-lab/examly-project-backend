@@ -1,4 +1,6 @@
 import { Controller, Get } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
+import { ApiOperation } from '@nestjs/swagger';
 import {
   HealthCheckService,
   HealthCheck,
@@ -12,21 +14,23 @@ export class HealthController {
     private health: HealthCheckService,
     private memory: MemoryHealthIndicator,
     private http: HttpHealthIndicator,
+    private configService: ConfigService,
   ) {}
 
   @Get()
   @HealthCheck()
+  @ApiOperation({ summary: 'Get server health status' })
   check() {
-    const PORT = process.env.PORT || 3000;
+    const PORT = this.configService.get<string>('PORT') || 3000;
     const devServer = `http://localhost:${PORT}`;
 
     return this.health.check([
       () =>
         this.http.pingCheck(
           'examly-server',
-          process.env.NODE_ENV === 'development'
+          this.configService.get('NODE_ENV') === 'development'
             ? devServer
-            : process.env.NEST_API_BASE!,
+            : this.configService.get('NEST_API_BASE'),
         ),
       () => this.memory.checkHeap('memory_heap', 150 * 1024 * 1024), // 150MB threshold
       () => this.memory.checkRSS('memory_rss', 300 * 1024 * 1024), // 300MB threshold
