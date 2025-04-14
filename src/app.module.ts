@@ -13,6 +13,12 @@ import configuration from 'config/configuration';
 
 @Module({
   imports: [
+    AuthModule,
+    UsersModule,
+    ExamsModule,
+    ExamTakingModule,
+    MailModule,
+    PrismaModule,
     HealthModule,
     ConfigModule.forRoot({
       load: [configuration],
@@ -20,12 +26,6 @@ import configuration from 'config/configuration';
       isGlobal: true,
       cache: true,
     }),
-    AuthModule,
-    UsersModule,
-    ExamsModule,
-    ExamTakingModule,
-    MailModule,
-    PrismaModule,
   ],
   controllers: [AppController],
   providers: [AppService],
