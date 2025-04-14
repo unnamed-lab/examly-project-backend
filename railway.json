@@ -1,0 +1,12 @@
+{
+  "build": {
+    "builder": "nixpacks",
+    "config": {
+      "startCmd": "npm run start",
+      "buildCmd": "npm run build"
+    }
+  },
+  "deploy": {
+    "startCommand": "npm run migrate && npm run start"
+  }
+}
