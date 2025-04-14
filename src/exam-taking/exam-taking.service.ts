@@ -89,7 +89,9 @@ export class ExamTakingService {
 
     let isCorrect = false;
     if (question.type === 'MULTIPLE_CHOICE') {
-      isCorrect = question.correctAnswer === submitAnswerDto.response;
+      isCorrect =
+        question.correctAnswer.toLowerCase() ===
+        submitAnswerDto.response.toLowerCase();
     }
 
     return this.prisma.answer.create({

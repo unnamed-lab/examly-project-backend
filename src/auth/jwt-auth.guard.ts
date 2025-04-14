@@ -29,7 +29,7 @@ export class JwtAuthGuard implements CanActivate {
 
     try {
       const secret = this.configService.get<string>('JWT_SECRET');
-      console.log({ secret });
+
       // Verify token and get payload
       const payload: JwtPayload = await this.jwtService.verifyAsync(token, {
         secret,
@@ -39,8 +39,6 @@ export class JwtAuthGuard implements CanActivate {
       if (!payload.userId || !payload.email) {
         throw new UnauthorizedException('Invalid token payload');
       }
-
-      console.log('Decoded Payload:', payload);
 
       // Attach user to request object
       request.user = {
