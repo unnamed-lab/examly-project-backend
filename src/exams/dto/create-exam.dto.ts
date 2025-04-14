@@ -8,7 +8,7 @@ import {
 import { ApiProperty } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
 
-class QuestionDto {
+export class QuestionDto {
   @ApiProperty()
   @IsNotEmpty()
   @IsString()
@@ -50,9 +50,9 @@ export class CreateExamDto {
   @IsNumber()
   duration: number;
 
-  @ApiProperty({ type: [QuestionDto] })
+  @ApiProperty({ type: [QuestionDto], required: false })
   @IsArray()
   @ValidateNested({ each: true })
   @Type(() => QuestionDto)
-  questions: QuestionDto[];
+  questions?: QuestionDto[] | null;
 }

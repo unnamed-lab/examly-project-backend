@@ -6,6 +6,8 @@ import {
   Param,
   UseGuards,
   Req,
+  Delete,
+  Patch,
 } from '@nestjs/common';
 import { ExamsService } from './exams.service';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
@@ -15,10 +17,11 @@ import {
   ApiResponse,
   ApiBearerAuth,
 } from '@nestjs/swagger';
-import { CreateExamDto } from './dto/create-exam.dto';
+import { CreateExamDto, QuestionDto } from './dto/create-exam.dto';
 import { CustomRequest } from 'types';
 import { Roles } from 'src/roles/roles.decorator';
 import { Role } from 'src/roles/role.enum';
+import { UpdateExamDto } from './dto/update-exam.dto';
 
 @ApiTags('Exams')
 @Controller('exams')
@@ -33,6 +36,16 @@ export class ExamsController {
   @ApiResponse({ status: 201, description: 'Exam created successfully' })
   createExam(@Body() createExamDto: CreateExamDto) {
     return this.examsService.createExam(createExamDto);
+  }
+
+  @Patch()
+  @Roles(Role.Admin)
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Update new exam' })
+  @ApiResponse({ status: 201, description: 'Exam updated successfully' })
+  updateExam(@Param('id') id: string, @Body() updateExamDto: UpdateExamDto) {
+    return this.examsService.updateExam(+id, updateExamDto);
   }
 
   @Get()
@@ -53,6 +66,49 @@ export class ExamsController {
     return this.examsService.getExamById(+id);
   }
 
+  @Get(':id/question')
+  @Roles(Role.Admin)
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Get exam by ID' })
+  @ApiResponse({ status: 200, description: 'Exam details' })
+  getQuestionById(@Param('id') id: string) {
+    return this.examsService.getQuestion(+id);
+  }
+
+  @Post(':id/question')
+  @Roles(Role.Admin)
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Get exam by question' })
+  @ApiResponse({ status: 200, description: 'Question details' })
+  addQuestion(@Param('id') id: string, @Body() createQuestionDto: QuestionDto) {
+    return this.examsService.addQuestion(+id, createQuestionDto);
+  }
+
+  @Patch(':id/question')
+  @Roles(Role.Admin)
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Update exam question' })
+  @ApiResponse({ status: 200, description: 'Question details' })
+  updateQuestion(
+    @Param('id') id: string,
+    @Body() createQuestionDto: QuestionDto,
+  ) {
+    return this.examsService.updateQuestion(+id, createQuestionDto);
+  }
+
+  @Delete(':id/question')
+  @Roles(Role.Admin)
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Delete question by ID' })
+  @ApiResponse({ status: 200, description: 'Question details' })
+  deleteQuestionById(@Param('id') id: string) {
+    return this.examsService.deleteQuestion(+id);
+  }
+
   @Post(':id/enroll')
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
@@ -63,11 +119,22 @@ export class ExamsController {
   }
 
   @Get('student/my-exams')
+  @Roles(Role.Admin)
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Get student exams' })
   @ApiResponse({ status: 200, description: 'List of student exams' })
   getStudentExams(@Req() req: CustomRequest) {
     return this.examsService.getStudentExams(req.user?.userId);
+  }
+
+  @Delete(':id')
+  @Roles(Role.Admin)
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Get exam by ID' })
+  @ApiResponse({ status: 200, description: 'Exam details' })
+  deleteExamById(@Param('id') id: string) {
+    return this.examsService.deleteExamById(+id);
   }
 }
