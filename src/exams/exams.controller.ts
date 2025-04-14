@@ -56,7 +56,7 @@ export class ExamsController {
   @ApiOperation({ summary: 'Enroll in an exam' })
   @ApiResponse({ status: 201, description: 'Enrollment successful' })
   enrollInExam(@Param('id') id: string, @Req() req: CustomRequest) {
-    return this.examsService.enrollUser(+id, req.user?.userId as number);
+    return this.examsService.enrollUser(+id, req.user?.userId);
   }
 
   @Get('student/my-exams')
@@ -65,6 +65,6 @@ export class ExamsController {
   @ApiOperation({ summary: 'Get student exams' })
   @ApiResponse({ status: 200, description: 'List of student exams' })
   getStudentExams(@Req() req: CustomRequest) {
-    return this.examsService.getStudentExams(req.user?.userId as number);
+    return this.examsService.getStudentExams(req.user?.userId);
   }
 }
