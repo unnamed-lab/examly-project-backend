@@ -1,13 +1,14 @@
 import { Injectable, CanActivate, ExecutionContext } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { Request } from 'express';
+import { CustomRequest } from 'types';
 
 @Injectable()
 export class JwtAuthGuard implements CanActivate {
   constructor(private jwtService: JwtService) {}
 
-  canActivate(context: ExecutionContext): boolean {
-    const request = context.switchToHttp().getRequest<Request>();
+  async canActivate(context: ExecutionContext): Promise<boolean> {
+    const request = context.switchToHttp().getRequest<CustomRequest>();
     const token = this.extractTokenFromHeader(request);
 
     if (!token) {
@@ -15,10 +16,14 @@ export class JwtAuthGuard implements CanActivate {
     }
 
     try {
-      const payload = this.jwtService.verify<{
-        userId: string;
-        username: string;
+      const payload = await this.jwtService.verifyAsync<{
+        userId: any;
+        email: string;
+        role: string;
       }>(token);
+
+      console.log({ payload });
+
       request.user = payload;
       return true;
     } catch {
@@ -26,7 +31,7 @@ export class JwtAuthGuard implements CanActivate {
     }
   }
 
-  private extractTokenFromHeader(request: Request): string | undefined {
+  private extractTokenFromHeader(request: CustomRequest): string | undefined {
     const [type, token] = request.headers.authorization?.split(' ') ?? [];
     return type === 'Bearer' ? token : undefined;
   }

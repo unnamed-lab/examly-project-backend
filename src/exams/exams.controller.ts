@@ -17,6 +17,8 @@ import {
 } from '@nestjs/swagger';
 import { CreateExamDto } from './dto/create-exam.dto';
 import { CustomRequest } from 'types';
+import { Roles } from 'src/roles.decorator';
+import { Role } from 'src/role.enum';
 
 @ApiTags('Exams')
 @Controller('exams')
@@ -24,6 +26,7 @@ export class ExamsController {
   constructor(private readonly examsService: ExamsService) {}
 
   @Post()
+  @Roles(Role.Admin)
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Create a new exam' })

@@ -40,13 +40,12 @@ export class AuthService {
     if (!user) {
       throw new UnauthorizedException('Invalid credentials');
     }
-    console.log('Logging...');
     const secret = this.configService.get<string>('JWT_SECRET');
-    console.log({ secret });
     const access_token = await this.jwtService.signAsync(
       {
         userId: user.id,
         email: user.email,
+        role: user.role,
       },
       { secret },
     );
