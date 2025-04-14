@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateExamDto, QuestionDto } from './dto/create-exam.dto';
 import { UpdateExamDto, UpdateQuestionDto } from './dto/update-exam.dto';
@@ -14,15 +14,17 @@ export class ExamsService {
         courseCode: createExamDto.courseCode,
         description: createExamDto.description,
         duration: createExamDto.duration,
-        questions: {
-          create: createExamDto.questions.map((q) => ({
-            text: q.text,
-            type: q.type,
-            options: q.options,
-            correctAnswer: q.correctAnswer,
-            points: q.points,
-          })),
-        },
+        ...(createExamDto.questions && {
+          questions: {
+            create: createExamDto.questions.map((q) => ({
+              text: q.text,
+              type: q.type,
+              options: q.options,
+              correctAnswer: q.correctAnswer,
+              points: q.points || 1, // Default points if not provided
+            })),
+          },
+        }),
       },
       include: {
         questions: true,
@@ -38,15 +40,17 @@ export class ExamsService {
         courseCode: updateExamDto.courseCode,
         description: updateExamDto.description,
         duration: updateExamDto.duration,
-        questions: {
-          create: updateExamDto.questions.map((q) => ({
-            text: q.text,
-            type: q.type,
-            options: q.options,
-            correctAnswer: q.correctAnswer,
-            points: q.points,
-          })),
-        },
+        ...(updateExamDto.questions && {
+          questions: {
+            create: updateExamDto.questions.map((q) => ({
+              text: q.text,
+              type: q.type,
+              options: q.options,
+              correctAnswer: q.correctAnswer,
+              points: q.points || 1, // Default points if not provided
+            })),
+          },
+        }),
       },
       include: {
         questions: true,
@@ -88,8 +92,18 @@ export class ExamsService {
   }
 
   async getQuestion(id: number) {
-    return this.prisma.question.findUnique({
+    const question = await this.prisma.question.findUnique({
       where: { id },
+    });
+
+    if (!question) throw new NotFoundException();
+
+    return question;
+  }
+
+  async getAllQuestion(id: number) {
+    return this.prisma.question.findMany({
+      where: { examId: id },
     });
   }
 
@@ -125,13 +139,29 @@ export class ExamsService {
     });
   }
 
-  async getStudentExams(userId: number) {
-    return this.prisma.examEnrollment.findMany({
+  async getStudentExams(userId: number, questionCount = 30) {
+    const enrollments = await this.prisma.examEnrollment.findMany({
       where: { userId },
       include: {
-        exam: true,
+        exam: {
+          include: {
+            questions: true,
+          },
+        },
       },
     });
+
+    return enrollments.map((enrollment) => ({
+      ...enrollment,
+      exam: {
+        ...enrollment.exam,
+        questions: enrollment.exam.questions
+          ? [...enrollment.exam.questions]
+              .sort(() => 0.5 - Math.random())
+              .slice(0, questionCount)
+          : [],
+      },
+    }));
   }
 
   async deleteExamById(id: number) {

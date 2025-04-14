@@ -4,6 +4,7 @@ import {
   IsString,
   IsArray,
   ValidateNested,
+  IsOptional,
 } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
@@ -24,10 +25,13 @@ export class QuestionDto {
   options?: string[];
 
   @ApiProperty({ required: false })
+  @IsString()
+  @IsOptional()
   correctAnswer?: string;
 
   @ApiProperty()
   @IsNumber()
+  @IsOptional()
   points: number;
 }
 
@@ -43,6 +47,7 @@ export class CreateExamDto {
   courseCode: string;
 
   @ApiProperty({ required: false })
+  @IsOptional()
   description?: string;
 
   @ApiProperty()
@@ -54,5 +59,6 @@ export class CreateExamDto {
   @IsArray()
   @ValidateNested({ each: true })
   @Type(() => QuestionDto)
-  questions?: QuestionDto[] | null;
+  @IsOptional()
+  questions?: QuestionDto[];
 }

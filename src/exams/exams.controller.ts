@@ -38,7 +38,7 @@ export class ExamsController {
     return this.examsService.createExam(createExamDto);
   }
 
-  @Patch()
+  @Patch(':id')
   @Roles(Role.Admin)
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
@@ -66,7 +66,17 @@ export class ExamsController {
     return this.examsService.getExamById(+id);
   }
 
-  @Get(':id/question')
+  @Get(':id/questions')
+  @Roles(Role.Admin)
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Get exam questions' })
+  @ApiResponse({ status: 200, description: 'Exam details' })
+  getQuestions(@Param('id') id: string) {
+    return this.examsService.getAllQuestion(+id);
+  }
+
+  @Get('question/:id')
   @Roles(Role.Admin)
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
@@ -119,7 +129,6 @@ export class ExamsController {
   }
 
   @Get('student/my-exams')
-  @Roles(Role.Admin)
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Get student exams' })
@@ -132,7 +141,7 @@ export class ExamsController {
   @Roles(Role.Admin)
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
-  @ApiOperation({ summary: 'Get exam by ID' })
+  @ApiOperation({ summary: 'Delete exam by ID' })
   @ApiResponse({ status: 200, description: 'Exam details' })
   deleteExamById(@Param('id') id: string) {
     return this.examsService.deleteExamById(+id);
