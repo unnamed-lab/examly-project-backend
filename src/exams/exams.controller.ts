@@ -17,8 +17,8 @@ import {
 } from '@nestjs/swagger';
 import { CreateExamDto } from './dto/create-exam.dto';
 import { CustomRequest } from 'types';
-import { Roles } from 'src/roles.decorator';
-import { Role } from 'src/role.enum';
+import { Roles } from 'src/roles/roles.decorator';
+import { Role } from 'src/roles/role.enum';
 
 @ApiTags('Exams')
 @Controller('exams')

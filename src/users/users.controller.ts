@@ -3,6 +3,7 @@ import {
   Body,
   Controller,
   Get,
+  Query,
   ValidationPipe,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
@@ -14,5 +15,11 @@ export class UsersController {
   async findByEmail(@Body(ValidationPipe) payload: { email: string }) {
     if (!payload.email) throw new BadRequestException();
     return this.userService.findByEmail(payload.email);
+  }
+
+  @Get(':id')
+  async findById(@Query() id: number) {
+    if (!id) throw new BadRequestException();
+    return this.userService.findById(id);
   }
 }
