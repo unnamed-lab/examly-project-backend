@@ -4,6 +4,7 @@ import {
   Controller,
   Get,
   NotFoundException,
+  Post,
   Query,
   Req,
   ValidationPipe,
@@ -11,6 +12,7 @@ import {
 import { UsersService } from './users.service';
 import { CustomRequest } from 'types';
 import { ApiOperation } from '@nestjs/swagger';
+import { Role } from 'src/roles/role.enum';
 
 @Controller('users')
 export class UsersController {
@@ -33,5 +35,11 @@ export class UsersController {
   async findById(@Query() id: number) {
     if (!id) throw new BadRequestException();
     return this.userService.findById(id);
+  }
+
+  @Post(':id')
+  async setRole(@Query() id: number, @Body() rolePayload: { role: Role }) {
+    if (!id) throw new BadRequestException();
+    return this.userService.setRole(id, rolePayload.role);
   }
 }

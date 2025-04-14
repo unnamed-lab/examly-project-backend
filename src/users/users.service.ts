@@ -1,5 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
+import { Role } from 'src/roles/role.enum';
 
 @Injectable()
 export class UsersService {
@@ -22,6 +23,15 @@ export class UsersService {
         email: true,
         role: true,
         createdAt: true,
+      },
+    });
+  }
+
+  async setRole(id: number, role: Role) {
+    return this.prisma.user.update({
+      where: { id },
+      data: {
+        role,
       },
     });
   }
