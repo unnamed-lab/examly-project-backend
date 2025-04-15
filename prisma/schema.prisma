@@ -1,11 +1,5 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
-  provider = "prisma-client-js"  
+  provider = "prisma-client-js"
   output   = "generated/prisma"
 }
 
@@ -15,66 +9,66 @@ datasource db {
 }
 
 model User {
-  id          Int       @id @default(autoincrement())
-  firstName   String
-  lastName    String
-  email       String    @unique
-  password    String
-  role        String    @default("STUDENT") // "STUDENT" or "ADMIN"
-  exams       ExamEnrollment[]
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
+  id        Int              @id @default(autoincrement())
+  firstName String
+  lastName  String
+  email     String           @unique
+  password  String
+  role      String           @default("STUDENT")
+  createdAt DateTime         @default(now())
+  updatedAt DateTime         @updatedAt
+  exams     ExamEnrollment[]
 }
 
 model Exam {
-  id          Int       @id @default(autoincrement())
+  id          Int              @id @default(autoincrement())
   title       String
   courseCode  String
   description String?
-  duration    Int       // in minutes
-  questions   Question[]
+  duration    Int
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime         @updatedAt
   enrollments ExamEnrollment[]
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
+  questions   Question[]
 }
 
 model Question {
-  id          Int       @id @default(autoincrement())
-  examId      Int
-  exam        Exam      @relation(fields: [examId], references: [id])
-  text        String
-  type        String    // "MULTIPLE_CHOICE" or "ESSAY"
-  options     String[]  // For multiple choice
-  correctAnswer String? // For auto-grading
-  points      Int       @default(1)
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
-  answer Answer[]
+  id            Int      @id @default(autoincrement())
+  examId        Int
+  text          String
+  type          String
+  options       String[]
+  correctAnswer String?
+  points        Int      @default(1)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  answer        Answer[]
+  exam          Exam     @relation(fields: [examId], references: [id])
 }
 
 model ExamEnrollment {
-  id          Int       @id @default(autoincrement())
-  userId      Int
-  user        User      @relation(fields: [userId], references: [id])
-  examId      Int
-  exam        Exam      @relation(fields: [examId], references: [id])
-  startTime   DateTime?
-  endTime     DateTime?
-  answers     Answer[]
-  score       Int?
-  completed   Boolean   @default(false)
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
+  id        Int       @id @default(autoincrement())
+  userId    Int
+  examId    Int
+  startTime DateTime?
+  endTime   DateTime?
+  score     Int?
+  completed Boolean   @default(false)
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  answers   Answer[]
+  exam      Exam      @relation(fields: [examId], references: [id])
+  user      User      @relation(fields: [userId], references: [id])
 }
 
 model Answer {
-  id          Int       @id @default(autoincrement())
+  id           Int            @id @default(autoincrement())
   enrollmentId Int
-  enrollment  ExamEnrollment @relation(fields: [enrollmentId], references: [id])
-  questionId  Int
-  question    Question  @relation(fields: [questionId], references: [id])
-  response    String
-  isCorrect   Boolean?
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
+  questionId   Int
+  response     String
+  isCorrect    Boolean?
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
+  enrollment   ExamEnrollment @relation(fields: [enrollmentId], references: [id])
+  question     Question       @relation(fields: [questionId], references: [id])
 }

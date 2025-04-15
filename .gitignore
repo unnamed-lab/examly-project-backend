@@ -2,7 +2,6 @@ node_modules
 dist
 
 prisma/generated
-prisma/migrations
 
 .env*
 !.env.example
