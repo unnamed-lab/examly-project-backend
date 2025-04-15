@@ -66,6 +66,16 @@ export class ExamsController {
     return this.examsService.getExamById(+id);
   }
 
+  @Delete(':id')
+  @Roles(Role.Admin)
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Delete exam by ID' })
+  @ApiResponse({ status: 200, description: 'Exam details' })
+  deleteExamById(@Param('id') id: string) {
+    return this.examsService.deleteExamById(+id);
+  }
+
   @Get(':id/questions')
   @Roles(Role.Admin)
   @UseGuards(JwtAuthGuard)
@@ -74,6 +84,16 @@ export class ExamsController {
   @ApiResponse({ status: 200, description: 'Exam details' })
   getQuestions(@Param('id') id: string) {
     return this.examsService.getAllQuestion(+id);
+  }
+
+  @Post(':id/question')
+  @Roles(Role.Admin)
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Create exam question' })
+  @ApiResponse({ status: 200, description: 'Question details' })
+  addQuestion(@Param('id') id: string, @Body() createQuestionDto: QuestionDto) {
+    return this.examsService.addQuestion(+id, createQuestionDto);
   }
 
   @Get('question/:id')
@@ -86,17 +106,7 @@ export class ExamsController {
     return this.examsService.getQuestion(+id);
   }
 
-  @Post(':id/question')
-  @Roles(Role.Admin)
-  @UseGuards(JwtAuthGuard)
-  @ApiBearerAuth()
-  @ApiOperation({ summary: 'Get exam by question' })
-  @ApiResponse({ status: 200, description: 'Question details' })
-  addQuestion(@Param('id') id: string, @Body() createQuestionDto: QuestionDto) {
-    return this.examsService.addQuestion(+id, createQuestionDto);
-  }
-
-  @Patch(':id/question')
+  @Patch('question/:id')
   @Roles(Role.Admin)
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
@@ -109,7 +119,7 @@ export class ExamsController {
     return this.examsService.updateQuestion(+id, createQuestionDto);
   }
 
-  @Delete(':id/question')
+  @Delete('question/:id')
   @Roles(Role.Admin)
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
@@ -135,15 +145,5 @@ export class ExamsController {
   @ApiResponse({ status: 200, description: 'List of student exams' })
   getStudentExams(@Req() req: CustomRequest) {
     return this.examsService.getStudentExams(req.user?.userId);
-  }
-
-  @Delete(':id')
-  @Roles(Role.Admin)
-  @UseGuards(JwtAuthGuard)
-  @ApiBearerAuth()
-  @ApiOperation({ summary: 'Delete exam by ID' })
-  @ApiResponse({ status: 200, description: 'Exam details' })
-  deleteExamById(@Param('id') id: string) {
-    return this.examsService.deleteExamById(+id);
   }
 }

@@ -10,7 +10,7 @@ import { ApiProperty } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
 
 export class QuestionDto {
-  @ApiProperty()
+  @ApiProperty({ type: String })
   @IsNotEmpty()
   @IsString()
   text: string;
@@ -29,28 +29,28 @@ export class QuestionDto {
   @IsOptional()
   correctAnswer?: string;
 
-  @ApiProperty()
+  @ApiProperty({ type: String })
   @IsNumber()
   @IsOptional()
   points: number;
 }
 
 export class CreateExamDto {
-  @ApiProperty()
+  @ApiProperty({ type: String })
   @IsNotEmpty()
   @IsString()
   title: string;
 
-  @ApiProperty()
+  @ApiProperty({ type: String })
   @IsNotEmpty()
   @IsString()
   courseCode: string;
 
-  @ApiProperty({ required: false })
+  @ApiProperty({ type: String, required: false })
   @IsOptional()
   description?: string;
 
-  @ApiProperty()
+  @ApiProperty({ type: Number })
   @IsNotEmpty()
   @IsNumber()
   duration: number;

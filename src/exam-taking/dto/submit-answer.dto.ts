@@ -2,11 +2,11 @@ import { IsNumber, IsString } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
 export class SubmitAnswerDto {
-  @ApiProperty()
+  @ApiProperty({ type: Number })
   @IsNumber()
   questionId: number;
 
-  @ApiProperty()
+  @ApiProperty({ type: String })
   @IsString()
   response: string;
 }

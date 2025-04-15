@@ -27,7 +27,17 @@ export class ExamsService {
         }),
       },
       include: {
-        questions: true,
+        questions: {
+          select: {
+            id: true,
+            examId: true,
+            text: true,
+            options: true,
+            correctAnswer: false,
+            points: true,
+            type: true,
+          },
+        },
       },
     });
   }
@@ -81,7 +91,6 @@ export class ExamsService {
     return this.prisma.question.update({
       where: { id },
       data: {
-        examId: id,
         type: updateQuestionDto.type,
         text: updateQuestionDto.text,
         points: updateQuestionDto.points,
@@ -104,6 +113,15 @@ export class ExamsService {
   async getAllQuestion(id: number) {
     return this.prisma.question.findMany({
       where: { examId: id },
+      select: {
+        id: true,
+        examId: true,
+        text: true,
+        options: true,
+        correctAnswer: false,
+        points: true,
+        type: true,
+      },
     });
   }
 
@@ -116,7 +134,17 @@ export class ExamsService {
   async getExams() {
     return this.prisma.exam.findMany({
       include: {
-        questions: true,
+        questions: {
+          select: {
+            id: true,
+            examId: true,
+            text: true,
+            options: true,
+            correctAnswer: false,
+            points: true,
+            type: true,
+          },
+        },
       },
     });
   }
@@ -125,7 +153,17 @@ export class ExamsService {
     return this.prisma.exam.findUnique({
       where: { id },
       include: {
-        questions: true,
+        questions: {
+          select: {
+            id: true,
+            examId: true,
+            text: true,
+            options: true,
+            correctAnswer: false,
+            points: true,
+            type: true,
+          },
+        },
       },
     });
   }
@@ -145,7 +183,17 @@ export class ExamsService {
       include: {
         exam: {
           include: {
-            questions: true,
+            questions: {
+              select: {
+                id: true,
+                examId: true,
+                text: true,
+                options: true,
+                correctAnswer: false,
+                points: true,
+                type: true,
+              },
+            },
           },
         },
       },
