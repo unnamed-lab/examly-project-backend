@@ -10,10 +10,14 @@ import {
 import { PrismaService } from '../prisma/prisma.service';
 import { DateTime } from 'luxon';
 import { SubmitAnswerDto } from './dto/submit-answer.dto';
+import { MailService } from 'src/mail/mail.service';
 
 @Injectable()
 export class ExamTakingService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    private mail: MailService,
+  ) {}
 
   async startExam(enrollmentId: number, userId: number) {
     const enrollment = await this.prisma.examEnrollment.findUnique({
@@ -120,6 +124,14 @@ export class ExamTakingService {
       throw new NotFoundException('Enrollment not found');
     }
 
+    const exam = await this.prisma.exam.findUnique({
+      where: { id: enrollment.examId },
+    });
+
+    const user = await this.prisma.user.findUnique({
+      where: { id: enrollment.userId },
+    });
+
     if (enrollment.userId !== userId) {
       throw new ForbiddenException('You are not enrolled in this exam');
     }
@@ -136,6 +148,10 @@ export class ExamTakingService {
     const score = enrollment.answers.reduce((total, answer) => {
       return total + (answer.isCorrect ? answer.question.points : 0);
     }, 0);
+
+    const total = 40;
+
+    await this.mail.sendExamResult(user.email, exam.title, score, total);
 
     return this.prisma.examEnrollment.update({
       where: { id: enrollmentId },
