@@ -66,8 +66,18 @@ export class ExamsController {
     return this.examsService.getExamById(+id);
   }
 
+  @Patch('question/:id')
+  // @Roles(Role.Admin)
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Update exam question' })
+  @ApiResponse({ status: 200, description: 'Question details' })
+  patchExam(@Param('id') id: string, @Body() updateExamDto: UpdateExamDto) {
+    return this.examsService.updateExam(+id, updateExamDto);
+  }
+
   @Delete(':id')
-  @Roles(Role.Admin)
+  // @Roles(Role.Admin)
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Delete exam by ID' })
@@ -87,7 +97,7 @@ export class ExamsController {
   }
 
   @Post(':id/question')
-  @Roles(Role.Admin)
+  // @Roles(Role.Admin)
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Create exam question' })
@@ -97,7 +107,7 @@ export class ExamsController {
   }
 
   @Get('question/:id')
-  @Roles(Role.Admin)
+  // @Roles(Role.Admin)
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Get exam by ID' })
@@ -107,7 +117,7 @@ export class ExamsController {
   }
 
   @Patch('question/:id')
-  @Roles(Role.Admin)
+  // @Roles(Role.Admin)
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Update exam question' })
@@ -120,7 +130,7 @@ export class ExamsController {
   }
 
   @Delete('question/:id')
-  @Roles(Role.Admin)
+  // @Roles(Role.Admin)
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Delete question by ID' })
