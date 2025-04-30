@@ -29,7 +29,7 @@ export class ExamsController {
   constructor(private readonly examsService: ExamsService) {}
 
   @Post()
-  @Roles(Role.Admin)
+  // @Roles(Role.Admin)
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Create a new exam' })
@@ -39,7 +39,7 @@ export class ExamsController {
   }
 
   @Patch(':id')
-  @Roles(Role.Admin)
+  // @Roles(Role.Admin)
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Update new exam' })

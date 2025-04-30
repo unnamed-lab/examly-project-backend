@@ -1,20 +1,18 @@
+/* eslint-disable @typescript-eslint/no-unsafe-call */
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
 import { Injectable } from '@nestjs/common';
 import * as nodemailer from 'nodemailer';
 import { ConfigService } from '@nestjs/config';
+import { MailerService } from '@nestjs-modules/mailer';
 
 @Injectable()
 export class MailService {
   private transporter: nodemailer.Transporter;
 
-  constructor(private configService: ConfigService) {
-    this.transporter = nodemailer.createTransport({
-      service: 'gmail',
-      auth: {
-        user: this.configService.get('EMAIL_USER'),
-        pass: this.configService.get('EMAIL_PASSWORD'),
-      },
-    });
-  }
+  constructor(
+    private configService: ConfigService,
+    private mailer: MailerService,
+  ) {}
 
   async sendExamResult(
     email: string,
@@ -22,9 +20,13 @@ export class MailService {
     score: number,
     total: number,
   ) {
+    const from = this.configService.get<string>('MAIL_FROM_ADDRESS');
+    const sender = this.configService.get<string>('MAIL_FROM_NAME');
+
     const mailOptions = {
-      from: this.configService.get<string>('EMAIL_FROM'),
+      from,
       to: email,
+      sender,
       subject: `Your Exam Result: ${examTitle}`,
       html: `
         <h1>Exam Results</h1>
@@ -34,6 +36,11 @@ export class MailService {
       `,
     };
 
-    await this.transporter.sendMail(mailOptions);
+    try {
+      await this.mailer.sendMail(mailOptions);
+    } catch (error) {
+      console.error('Error sending verification email:', error);
+      throw error;
+    }
   }
 }
